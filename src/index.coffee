@@ -1,16 +1,18 @@
 EventEmitter = require('events').EventEmitter
-through = require('through')
-
-module.exports = Postie
 
 class Postie extends EventEmitter
 
     constructor: (@target, @url) ->
-        @target.receiveMessage(@handleMessage)
+        unless @url then @url = '*'
 
-    handleMessage: (event) ->
+        if self.addEventListener
+            self.addEventListener('message', @handleMessage)
+        else
+            self.attachEvent('onmessage', @handleMessage)
+
+    handleMessage: (event) =>
         pkg = JSON.parse(event.data)
-        @emit(pkg.name, pkg.data)
+        @emit(pkg.name, pkg.message)
 
         # unless @streams[pkg.name] then @streams[pkg.name] = @buildStream()
 
@@ -27,9 +29,8 @@ class Postie extends EventEmitter
     # subscribe: (name) -> @getStream(name)
 
     post: (name, message) ->
-        return @target.postMessage(str, JSON.stringify(
+        return @target.postMessage(JSON.stringify(
             name: name, message: message
-        ))
+        ), @url)
 
-
-
+module.exports = Postie

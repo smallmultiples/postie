@@ -1,2 +1,2 @@
 ./bin/compile.sh
-./bin/package-standalone.sh
+./bin/package.sh
