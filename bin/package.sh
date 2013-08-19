@@ -1,0 +1,1 @@
+./node_modules/.bin/browserify lib/index.js --outfile build/postie.js --standalone Postie

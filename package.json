@@ -1,0 +1,28 @@
+{
+  "name": "postie",
+  "version": "0.0.0",
+  "description": "Abstracts postmessage into streams and or event emitters.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:smallmultiples/postie.git"
+  },
+  "keywords": [
+    "postmessage",
+    "postie",
+    "streams",
+    "events",
+    "client"
+  ],
+  "author": "James Hiscock",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/smallmultiples/postie/issues"
+  },
+  "scripts": {
+    "prepublish": "./bin/prepublish.sh"
+  }
+}
