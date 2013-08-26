@@ -11,8 +11,11 @@ class Postie extends EventEmitter
             self.attachEvent('onmessage', @handleMessage)
 
     handleMessage: (event) =>
-        pkg = JSON.parse(event.data)
-        @emit(pkg.name, pkg.message)
+        try
+            pkg = JSON.parse(event.data)
+            @emit(pkg.name, pkg.message)
+        catch error
+            @emit('error', error)
 
         # unless @streams[pkg.name] then @streams[pkg.name] = @buildStream()
 
