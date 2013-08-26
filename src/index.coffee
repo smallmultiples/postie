@@ -17,20 +17,6 @@ class Postie extends EventEmitter
         catch error
             @emit('error', error)
 
-        # unless @streams[pkg.name] then @streams[pkg.name] = @buildStream()
-
-        # @getStream(pkg.name).queue(pkg.data)
-
-    # buildStream: ->
-
-    # getStream: (name) ->
-        # if @streams[pkg.name]
-            # return @streams[pkg.name]
-        # else
-            # return @streams[pkg.name] = @buildStream()
-
-    # subscribe: (name) -> @getStream(name)
-
     post: (name, message) ->
         return @target.postMessage(JSON.stringify(
             name: name, message: message
