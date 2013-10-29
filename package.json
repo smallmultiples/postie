@@ -1,6 +1,6 @@
 {
   "name": "postie",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Abstracts postmessage into streams and or event emitters.",
   "main": "lib/index.js",
   "scripts": {
