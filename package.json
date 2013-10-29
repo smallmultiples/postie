@@ -19,7 +19,7 @@
     "client"
   ],
   "author": "James Hiscock",
-  "license": "BSD",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/smallmultiples/postie/issues"
   },
