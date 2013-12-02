@@ -4,18 +4,15 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Writable = require('readable-stream').Writable;
+  Writable = require('readable-stream/writable');
 
   Postie = (function(_super) {
     __extends(Postie, _super);
 
-    function Postie(name, target, targetOrigin) {
-      this.name = name;
+    function Postie(channel, target, targetOrigin) {
+      this.channel = channel;
       this.target = target;
-      this.targetOrigin = targetOrigin;
-      if (!this.targetOrigin) {
-        this.targetOrigin = '*';
-      }
+      this.targetOrigin = targetOrigin != null ? targetOrigin : '*';
       Postie.__super__.constructor.call(this, {
         decodeStrings: false,
         objectMode: true
@@ -24,17 +21,14 @@
 
     Postie.prototype._write = function(chunk, encoding, next) {
       var pkg;
-      console.log('_write');
       pkg = JSON.stringify({
-        name: this.name,
-        message: chunk
+        _postie: {
+          channel: this.channel,
+          "package": chunk
+        }
       });
-      window.postMessage(pkg, this.target, this.targetOrigin);
+      window.postMessage(this.target, pkg, this.targetOrigin);
       return next();
-    };
-
-    Postie.prototype.post = function(thing) {
-      return this.write(thing);
     };
 
     return Postie;

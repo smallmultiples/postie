@@ -1,18 +1,19 @@
-Writable = require('readable-stream').Writable
+Writable = require('readable-stream/writable')
 
 class Postie extends Writable
 
-    constructor: (@name, @target, @targetOrigin) ->
-        unless @targetOrigin then @targetOrigin = '*'
-
+    constructor: (@channel, @target, @targetOrigin='*') ->
         super(decodeStrings: false, objectMode: true)
 
     _write: (chunk, encoding, next) ->
-        console.log('_write')
-        pkg = JSON.stringify(name: @name, message: chunk)
-        window.postMessage(pkg, @target, @targetOrigin)
+        # Because we're sharing window.postmessage with who knows what, give
+        # our JSON object some namespacing to reduce the chance of hitting
+        # other people's formats.
+        pkg = JSON.stringify(_postie:
+            channel: @channel,
+            package: chunk
+        )
+        window.postMessage(@target, pkg, @targetOrigin)
         next()
-
-    post: (thing) -> @write(thing)
 
 module.exports = Postie

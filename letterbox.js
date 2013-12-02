@@ -4,9 +4,16 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Readable = require('readable-stream').Readable;
+  Readable = require('readable-stream/readable');
 
   EventEmitter = require('events').EventEmitter;
+
+  /*
+  We want to do this once, basically rather than having each letterbox register
+  their own event listener, just have one that receives and is closed over by all
+  the letterboxes.
+  */
+
 
   if (window.addEventListener) {
     window.addEventListener('message', handleMessage);
@@ -16,28 +23,54 @@
 
   messages = new EventEmitter;
 
+  /*
+  Emit on the messages emitter that all LetterBoxes close over on the channel that
+  the message is targeted at.
+  */
+
+
   handleMessage = function(event) {
     var error, pkg;
     console.log(event);
     try {
       pkg = JSON.parse(event.data);
-      if (typeof pkg.name !== 'undefined') {
-        return messages.emit(pkg.name, pkg.message);
+      if ((pkg != null ? pkg._postie : void 0) != null) {
+        return messages.emit(pkg._postie.channel, pkg._postie["package"]);
       }
     } catch (_error) {
       error = _error;
     }
   };
 
+  /*
+  Readable stream that when you start reading from listens to handleMessage and
+  then pushes anything it gets. If it tries to push and it can't, it stops
+  listening to the emitter.
+  */
+
+
   LetterBox = (function(_super) {
     __extends(LetterBox, _super);
 
-    function LetterBox(name) {
-      this.name = name;
+    /*
+    Creates a LetterBox listening to a channel.
+    
+    - `channel`: A string which is the channel name we're listening to messages
+      on.
+    */
+
+
+    function LetterBox(channel) {
+      this.channel = channel;
       LetterBox.__super__.constructor.call(this, {
         objectMode: true
       });
     }
+
+    /*
+    Internal read function.
+    */
+
 
     LetterBox.prototype._read = function(size) {
       var _this = this;
