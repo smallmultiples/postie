@@ -12,23 +12,10 @@
         <iframe src="http://127.0.0.1/postie/index.html" frameBorder="0" name="child-frame"></iframe>
         <script src="postie.js"></script>
         <script>
-            var LetterBox = require('postie').LetterBox
-            var testChannel = new LetterBox('testChannel')
-            testChannel.on('data', function() {
-                console.log('testChannel LetterBox - data:', arguments)
-            })
-            // var $frame = $('#guardian-nrma-bushfires-frame')
-            // var postie = new Postie(window.frames['guardian-nrma-bushfires-frame'], $frame.attr('src'))
-            // postie.on('change:height', function(height) { $frame.height(height) })
-            // postie.on('change:hash', function(hash) { window.location.hash = hash })
-            // postie.on('set:scroll', function(size) {
-            //     scrollTop = size.top - ($(window).height() - size.height) / 2
-            //     $(window).scrollTop($frame.offset().top + scrollTop)
-            // })
-            // postie.once('ready', function() {
-            //     postie.post('set:fragment', window.location.hash ? window.location.hash.slice(1) : '/')
-            // })
-            // postie.post('ready', {});
+            var postie = Postie()
+                .on('test', function(a, b, c) {
+                    console.log('a', a, 'b', b, 'c', c)
+                })
         </script>
     </body>
 </html>

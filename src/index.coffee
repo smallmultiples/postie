@@ -1,3 +1,1 @@
-module.exports =
-    Postie: require('./postie')
-    LetterBox: require('./letterbox')
+module.exports = require('./postoffice')

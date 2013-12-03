@@ -11,25 +11,10 @@
     <body>
         <script src="postie.js"></script>
         <script>
-            var Postie = window.Postie = require('postie').Postie
-            window.onload = function() {
-                var testChannel = new Postie('testChannel', window.parent)
-                setTimeout(function() {
-                    testChannel.write({message: 'hello there'})
-                }, 500);
-            }
-            // var $frame = $('#guardian-nrma-bushfires-frame')
-            // var postie = new Postie(window.frames['guardian-nrma-bushfires-frame'], $frame.attr('src'))
-            // postie.on('change:height', function(height) { $frame.height(height) })
-            // postie.on('change:hash', function(hash) { window.location.hash = hash })
-            // postie.on('set:scroll', function(size) {
-            //     scrollTop = size.top - ($(window).height() - size.height) / 2
-            //     $(window).scrollTop($frame.offset().top + scrollTop)
-            // })
-            // postie.once('ready', function() {
-            //     postie.post('set:fragment', window.location.hash ? window.location.hash.slice(1) : '/')
-            // })
-            // postie.post('ready', {});
+            var postie = Postie(window.parent)
+            setTimeout(function() {
+                postie.post('test', 1, 2, 3)
+            }, 500)
         </script>
     </body>
 </html>
