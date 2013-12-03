@@ -1,14 +1,18 @@
 Postie
 ======
 
-The current state of postmessage sucks. We had this idea to wrap it in a stream so you could communicate across frames with streams. On one end you'll create a `Postie`, to send messages (writeable stream) and the other a `LetterBox` to receive messages (readable stream).
+The current state of postmessage sucks. What we really want is to trigger events with arbitrary parameters in one frame and have them receivable in another frame with a simple EventEmitter.
 
-Postie is intended for use in cross-domain, cross-frame communication, but there's no reason you can't use it for same-domain frame communication!
+Postie is intended to work in cross-domain, cross-frame communications, but there's no reason you can't use it for same-domain frame communication!
 
 Installation
 ------------
 
-npm install postie
+`npm install postie`
+
+Or:
+
+`<script src="postie.js">` [download here][releases]
 
 Usage
 -----
@@ -24,25 +28,24 @@ The second, again with embeddable widgets, if we want to listen to url changes i
 So in the size case, we have something like so:
 
 ``` JavaScript
-var dimensions = new LetterBox('dimensions')
-dimensions.on('data', function(dimensions) {
+var child = new Postie()
+child.on('change:height', function(height) {
     $('frame[name=frame-name]')
-        .width(dimensinos.width)
-        .height(dimensinos.height)
+        .height(height)
 });
 ```
 
-LetterBox is a readable stream, so when data is pushed through the stream we get a 'data' event. We can handle it this way or we can pipe it to another stream that deals with it, for the sake of example I've left it as the data event.
+Postie is an EventEmitter, so you have that API (`once`, `removeListener`, etc.).
 
-The first and only argument to LetterBox is a channel. A channel is simply a string, it's just a namespace for postmessage messages sent via window.postmessage, to prevent the letterbox dealing with dimensions changes also having to worry about messages being sent about url changes.
+When you're only receiving messages, you don't need any arguments to postie. If you want the same instance to post messages as well you'll need to read the **Sending Messages** section.
 
 #### Sending Messages ####
 
 To finish off our size changing example, we need a Postie on the child frame to notify of dimension changes.
 
 ``` JavaScript
-var dimensions = new Postie('dimensions', window.parent)
-dimensions.write({ width: $(window).width(), height: $(window).height() })
+var parent = new Postie(window.parent)
+parent.post('change:height', $(window).height())
 ```
 
 The first argument is the channel again, and the second argument is the target frame. When you're going upwards in the frame heirarchy, this is easy: `window.parent`, `window.top`, `window.parent.parent`, etc. Going down is harder, you'll need to name your frames and access them like so: `window.frames['frame-name']`, just remember to have named them.
@@ -61,7 +64,7 @@ By default, postie will take care of this for you in a very forgiving manner. It
 It's easy enough to change your code to be specific:
 
 ``` JavaScript
-var dimensions = new Postie('dimensions', window.parent, 'example.com')
+var postie = new Postie(window.parent, 'example.com')
 ```
 
 This way if you know your parent is `'example.com'`, you can't send messages to `'totally-not-evil.com'` instead.
@@ -79,4 +82,6 @@ MIT
 Browser Compatibility
 ---------------------
 
-It's been tested in IE8+, Firefox, Chrome, Safari, Mobile-webkit, Mobile-chrome. It may work in other environments, I wouldnt know.
+It definitely works in Chrome, and past experience says these techniques work in other browsers IE8+, but I have to still do the actual testing for the 0.4.x release.
+
+[releases]: https://github.com/smallmultiples/postie/releases
