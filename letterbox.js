@@ -61,9 +61,17 @@
 
 
     function LetterBox(channel) {
+      var _this = this;
       this.channel = channel;
       LetterBox.__super__.constructor.call(this, {
         objectMode: true
+      });
+      messages.on(this.channel, function(data) {
+        if (reading) {
+          if (!_this.push(data)) {
+            return messages.off(_this.name);
+          }
+        }
       });
     }
 
@@ -73,14 +81,7 @@
 
 
     LetterBox.prototype._read = function(size) {
-      var _this = this;
-      console.log('listening to messages');
-      return messages.on(this.channel, function(data) {
-        console.log('got message');
-        if (!_this.push(data)) {
-          return messages.off(_this.name);
-        }
-      });
+      return this.reading = true;
     };
 
     return LetterBox;
