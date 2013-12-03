@@ -8,6 +8,27 @@
 
   EventEmitter = require('events').EventEmitter;
 
+  messages = new EventEmitter;
+
+  /*
+  Emit on the messages emitter that all LetterBoxes close over on the channel that
+  the message is targeted at.
+  */
+
+
+  handleMessage = function(event) {
+    var error, pkg;
+    try {
+      pkg = JSON.parse(event.data);
+      if ((pkg != null ? pkg._postie : void 0) != null) {
+        console.log('emit message');
+        return messages.emit(pkg._postie.channel, pkg._postie["package"]);
+      }
+    } catch (_error) {
+      error = _error;
+    }
+  };
+
   /*
   We want to do this once, basically rather than having each letterbox register
   their own event listener, just have one that receives and is closed over by all
@@ -20,27 +41,6 @@
   } else {
     window.attachEvent('onmessage', handleMessage);
   }
-
-  messages = new EventEmitter;
-
-  /*
-  Emit on the messages emitter that all LetterBoxes close over on the channel that
-  the message is targeted at.
-  */
-
-
-  handleMessage = function(event) {
-    var error, pkg;
-    console.log(event);
-    try {
-      pkg = JSON.parse(event.data);
-      if ((pkg != null ? pkg._postie : void 0) != null) {
-        return messages.emit(pkg._postie.channel, pkg._postie["package"]);
-      }
-    } catch (_error) {
-      error = _error;
-    }
-  };
 
   /*
   Readable stream that when you start reading from listens to handleMessage and
@@ -74,7 +74,9 @@
 
     LetterBox.prototype._read = function(size) {
       var _this = this;
-      return messages.on(this.name, function(data) {
+      console.log('listening to messages');
+      return messages.on(this.channel, function(data) {
+        console.log('got message');
         if (!_this.push(data)) {
           return messages.off(_this.name);
         }

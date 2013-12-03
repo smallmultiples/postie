@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "coffee -o . -c src",
-    "bundle": "npm run prepublish; mkdir dist; browserify -r ./index.js:postie index.js > dist/bundled.js",
+    "bundle": "npm run prepublish; mkdir dist; browserify -s Postie index.js > dist/bundled.js",
     "test": "npm run bundle; cp dist/bundled.js test/browser/postie.js"
   },
   "repository": {

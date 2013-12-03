@@ -27,7 +27,7 @@
           "package": chunk
         }
       });
-      window.postMessage(this.target, pkg, this.targetOrigin);
+      this.target.postMessage(pkg, this.targetOrigin);
       return next();
     };
 

@@ -13,7 +13,7 @@ class Postie extends Writable
             channel: @channel,
             package: chunk
         )
-        window.postMessage(@target, pkg, @targetOrigin)
+        @target.postMessage(pkg, @targetOrigin)
         next()
 
 module.exports = Postie
