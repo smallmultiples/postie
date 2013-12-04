@@ -28,7 +28,6 @@ class PostOffice extends EventEmitter
     ###
     post: (channel, pkg...) ->
         packed = @pack(channel, pkg)
-
         @target.postMessage(packed, @origin)
 
     ###

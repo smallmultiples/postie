@@ -5,6 +5,10 @@ The current state of postmessage sucks. What we really want is to trigger events
 
 Postie is intended to work in cross-domain, cross-frame communications, but there's no reason you can't use it for same-domain frame communication!
 
+**IMPORTANT**
+
+If you're trying to do cross-frame communication, it is necessary for the frame you're trying to postMessage *to* to support CORS. It doesn't matter if it's a parent or child frame. 
+
 Installation
 ------------
 
