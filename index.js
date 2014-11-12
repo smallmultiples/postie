@@ -42,10 +42,10 @@
 
 
     Postie.prototype.post = function() {
-      var channel, packed, pkg;
+      var channel, packed, pkg, _base;
       channel = arguments[0], pkg = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       packed = this.pack(channel, pkg);
-      return this.target.postMessage(packed, this.origin);
+      return typeof (_base = this.target).postMessage === "function" ? _base.postMessage(packed, this.origin) : void 0;
     };
 
     /*

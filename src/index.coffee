@@ -28,7 +28,7 @@ class Postie extends EventEmitter
     ###
     post: (channel, pkg...) ->
         packed = @pack(channel, pkg)
-        @target.postMessage(packed, @origin)
+        @target.postMessage?(packed, @origin)
 
     ###
     Sets up the postMessage handler
