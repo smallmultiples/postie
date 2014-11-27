@@ -28,7 +28,12 @@ class Postie extends EventEmitter
     ###
     post: (channel, pkg...) ->
         packed = @pack(channel, pkg)
-        @target.postMessage?(packed, @origin)
+        # We can't use the ? operator for checking it exists because of a very
+        # specific bug. CoffeeScript checks ?( to see if the thing has
+        # typeof === 'function', and though @target.postMessage is callable in
+        # IE8, it returns 'object' for typeof and so in IE8 using ?( here
+        # prevents postMessage from being called.
+        if @target.postMessage then @target.postMessage(packed, @origin)
 
     ###
     Sets up the postMessage handler
