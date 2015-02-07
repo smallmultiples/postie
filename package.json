@@ -29,5 +29,8 @@
     "tape": "^3.5.0",
     "zuul": "^1.17.1",
     "zuulnice": "^1.0.0"
+  },
+  "dependencies": {
+    "inherits": "^2.0.1"
   }
 }
