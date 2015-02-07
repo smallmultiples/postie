@@ -1,6 +1,7 @@
 module.exports = Postie
 
 var EventEmitter = require('events').EventEmitter
+var inherits = require('inherits')
 var postMessage = require('./postmessage')
 
 function Postie (target, origin) {
@@ -16,8 +17,7 @@ function Postie (target, origin) {
 
     this.listen()
 }
-
-Postie.prototype = new EventEmitter()
+inherits(Postie, EventEmitter)
 
 Postie.prototype.post = post
 Postie.prototype.listen = listen
