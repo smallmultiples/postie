@@ -12,8 +12,8 @@ browsers:
     version: latest
   - name: android
     version: latest
-# html: ./tests/parent.html
 builder: zuulnice
 browserify:
     extensions:
       - .js
+server: './tests/support/server.js'

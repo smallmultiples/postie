@@ -4,9 +4,9 @@
   "description": "Abstracts postmessage into streams and or event emitters.",
   "main": "index.js",
   "scripts": {
-    "bundle": "browserify -s Postie index.js > dist/bundled.js",
-    "test": "zuul -- tests/index.js",
-    "test-local": "zuul --local 8080 -- tests/index.js"
+    "bundle": "browserify -s Postie index.js > dist/bundled.js; cp dist/bundled.js tests/support/postie.js",
+    "test": "npm run bundle; zuul -- tests/index.js",
+    "test-local": "npm run bundle; zuul --local 8080 -- tests/index.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,8 @@
   },
   "devDependencies": {
     "browserify": "^8.1.3",
+    "connect": "^3.3.4",
+    "serve-static": "^1.8.1",
     "tape": "^3.5.0",
     "zuul": "^1.17.1",
     "zuulnice": "^1.0.0"
