@@ -1,4 +1,5 @@
 var test = require('tape')
+var inherits = require('inherits')
 var Postie = require('../index')
 
 // var iframe = document.getElementById('iframe').contentWindow
@@ -26,37 +27,14 @@ test('Postie instantiation', function (t) {
     window.postMessage('foo', '*')
 })
 
-// Convenience function to create a DOM event to be fired later.
-function makeEvent(name) {
-    if (document.createEvent) {
-        var ev = document.createEvent('HTMLEvents')
-        ev.initEvent(name, true, true)
-    }
-    else {
-        var ev = document.createEventObject()
-        ev.eventType = name
-    }
-
-    return ev
-}
-
-// Convenience function to programmatically a DOM event,
-function fireEvent(target, ev) {
-    if (document.createEvent) {
-        console.log('dispatching event')
-        target.dispatchEvent(ev)
-    }
-    else {
-        target.fireEvent('on' + ev.eventType, ev)
-    }
-}
-
 // We need to wrap the handle message function with a test object in scope of
 // the wrapper so we can pass a test when the handler is called.
 function makeListener(cb) {
     function Listener () {
         Postie.call(this, iframe)
     }
+
+    inherits(Listener, Postie)
 
     Listener.prototype.handleMessage = function (ev) {
         cb()
