@@ -4,8 +4,7 @@
   "description": "Abstracts postmessage into streams and or event emitters.",
   "main": "index.js",
   "scripts": {
-    "prepublish": "coffee -o . -c src",
-    "bundle": "npm run prepublish; mkdir dist; browserify -s Postie index.js > dist/bundled.js",
+    "bundle": "browserify -s Postie index.js > dist/bundled.js",
     "test": "npm run bundle; cp dist/bundled.js test/browser/postie.js"
   },
   "repository": {
@@ -25,7 +24,6 @@
     "url": "https://github.com/smallmultiples/postie/issues"
   },
   "devDependencies": {
-    "coffee-script": "~1.6.3",
-    "browserify": "~2.28.0"
+    "browserify": "^8.1.3"
   }
 }
