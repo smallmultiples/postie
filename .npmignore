@@ -1,4 +1,3 @@
-src/
 dist/
 .travis-yml
 .zuul.yml
