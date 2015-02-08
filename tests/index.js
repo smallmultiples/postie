@@ -82,7 +82,7 @@ test('Events get sent across frames and domains', function (t) {
         instance.stopListening()
     })
 
-    addIframe('http://127.0.0.1:64568/iframe.html')
+    addIframe('http://127.0.0.1:59978/iframe.html')
 })
 
 // Convenience function to add an iframe pointing at src
