@@ -21,6 +21,7 @@ inherits(Postie, EventEmitter)
 
 Postie.prototype.post = post
 Postie.prototype.listen = listen
+Postie.prototype.stopListening = stopListening
 Postie.prototype.handleMessage = handleMessage
 Postie.prototype.unpack = unpack
 Postie.prototype.pack = pack
@@ -38,15 +39,25 @@ function post (channel) {
 function listen () {
     var _this = this
 
-    function handler () {
+    this.handler = function () {
         _this.handleMessage.apply(_this, arguments)
     }
 
     if (window.addEventListener) {
-        window.addEventListener('message', handler)
+        window.addEventListener('message', this.handler)
     }
     else {
-        window.attachEvent('onmessage', handler)
+        window.attachEvent('onmessage', this.handler)
+    }
+}
+
+// Cleans up event listeners
+function stopListening () {
+    if (window.removeEventListener) {
+        window.removeEventListener('message', this.handler)
+    }
+    else {
+        window.detachEvent('onmessage', this.handler)
     }
 }
 

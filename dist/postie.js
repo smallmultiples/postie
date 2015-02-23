@@ -2,11 +2,13 @@
 module.exports = Postie
 
 var EventEmitter = require('events').EventEmitter
+var inherits = require('inherits')
 var postMessage = require('./postmessage')
 
 function Postie (target, origin) {
     if (!(this instanceof Postie)) return new Postie(target, origin)
 
+    // '*' is a wildcard origin
     if (origin == null) origin = '*'
 
     EventEmitter.call(this)
@@ -16,36 +18,51 @@ function Postie (target, origin) {
 
     this.listen()
 }
-
-Postie.prototype = new EventEmitter()
+inherits(Postie, EventEmitter)
 
 Postie.prototype.post = post
 Postie.prototype.listen = listen
+Postie.prototype.stopListening = stopListening
 Postie.prototype.handleMessage = handleMessage
 Postie.prototype.unpack = unpack
 Postie.prototype.pack = pack
 
+// Get the channel and arguments and send it to the target
+// Channel is the event that the other side will be listening for
 function post (channel) {
     var args = Array.prototype.slice.call(arguments, 1)
     var packed = this.pack(channel, args)
     postMessage(this.target, packed, this.origin)
 }
 
+// Listens in a cross-browser fashion. When postmessage isn't available
+// we'll either have to change listen or fake message events somehow.
 function listen () {
     var _this = this
 
-    function handler () {
+    this.handler = function () {
         _this.handleMessage.apply(_this, arguments)
     }
 
     if (window.addEventListener) {
-        window.addEventListener('message', handler)
+        window.addEventListener('message', this.handler)
     }
     else {
-        window.attachEvent('onmessage', handler)
+        window.attachEvent('onmessage', this.handler)
     }
 }
 
+// Cleans up event listeners
+function stopListening () {
+    if (window.removeEventListener) {
+        window.removeEventListener('message', this.handler)
+    }
+    else {
+        window.detachEvent('onmessage', this.handler)
+    }
+}
+
+// Unpacks and emits
 function handleMessage (ev) {
     var unpacked = this.unpack(ev.data)
     if (unpacked) {
@@ -55,7 +72,9 @@ function handleMessage (ev) {
     }
 }
 
+// Takes a message data string and deserialises it
 function unpack (data) {
+    // We don't control all message events, they won't always be JSON
     try {
         var unpacked = JSON.parse(data)
         if (unpacked.__postie) return unpacked.__postie
@@ -66,6 +85,8 @@ function unpack (data) {
     }
 }
 
+// Takes a channel and the arguments to emit with and serialises it
+// for transmission
 function pack (channel, args) {
     return JSON.stringify({
         __postie: {
@@ -74,13 +95,7 @@ function pack (channel, args) {
         }
     })
 }
-},{"./postmessage":2,"events":3}],2:[function(require,module,exports){
-module.exports = postMessage
-
-function postMessage (target, packed, origin) {
-    if (target.postMessage) return target.postMessage(packed, origin)
-}
-},{}],3:[function(require,module,exports){
+},{"./postmessage":4,"events":2,"inherits":3}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -140,10 +155,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -385,5 +398,38 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
+},{}],3:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],4:[function(require,module,exports){
+module.exports = postMessage
+
+// Separating it into a function so we can shim postmessage when
+// it's not available
+function postMessage (target, packed, origin) {
+    if (target.postMessage) return target.postMessage(packed, origin)
+}
 },{}]},{},[1])(1)
 });

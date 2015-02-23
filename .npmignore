@@ -1,2 +1,3 @@
 dist/
-test/
+.travis-yml
+.zuul.yml
